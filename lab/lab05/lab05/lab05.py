@@ -225,11 +225,11 @@ def sprout_leaves(t, leaves):
     # 首先检查当前节点是否是叶子。
     # 如果是叶子，则构建一个新的子树列表，其中每个叶子都被转换为一个带有新叶子的树节点。
     # 如果当前节点不是叶子，则递归地处理每个子树，并构建一个具有新分支的树。
-    # if is_leaf(t):
-    #     return tree(label(t), [tree(leaf) for leaf in leaves])
-    # else:
-    #     new_branches = [sprout_leaves(branch, leaves) for branch in branches(t)]
-    #     return tree(label(t), new_branches)
+    if is_leaf(t):
+        return tree(label(t), [tree(leaf) for leaf in leaves])
+    else:
+        new_branches = [sprout_leaves(branch, leaves) for branch in branches(t)]
+        return tree(label(t), new_branches)
     
     
     
