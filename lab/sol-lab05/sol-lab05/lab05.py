@@ -1,6 +1,3 @@
-from math import sqrt
-
-
 def flatten(s):
     """Returns a flattened version of list s.
 
@@ -17,14 +14,15 @@ def flatten(s):
     >>> x
     [[1, [1, 1]], 1, [1, 1]]
     """
-    "*** YOUR CODE HERE ***"
-    final_list = []
-    for ele in s:
-        if type(ele) == list:
-            final_list = final_list + flatten(ele)
-        else:
-            final_list = final_list + [ele]
-    return final_list
+    if not s:
+        return []
+    elif type(s[0]) == list:
+        return flatten(s[0]) + flatten(s[1:])
+    else:
+        return [s[0]] + flatten(s[1:])
+
+
+from math import sqrt
 
 
 def distance(city_a, city_b):
@@ -38,8 +36,9 @@ def distance(city_a, city_b):
     >>> distance(city_c, city_d)
     5.0
     """
-    "*** YOUR CODE HERE ***"
-    return sqrt((get_lat(city_a)-get_lat(city_b))**2 + (get_lon(city_a) - get_lon(city_b))**2)
+    lat_1, lon_1 = get_lat(city_a), get_lon(city_a)
+    lat_2, lon_2 = get_lat(city_b), get_lon(city_b)
+    return sqrt((lat_1 - lat_2)**2 + (lon_1 - lon_2)**2)
 
 
 def closer_city(lat, lon, city_a, city_b):
@@ -57,9 +56,12 @@ def closer_city(lat, lon, city_a, city_b):
     >>> closer_city(41.29, 174.78, bucharest, vienna)
     'Bucharest'
     """
-    "*** YOUR CODE HERE ***"
-    middle = make_city(None, lat, lon)
-    return get_name(city_a) if distance(middle, city_a) < distance(middle, city_b) else get_name(city_b)
+    new_city = make_city('arb', lat, lon)
+    dist1 = distance(city_a, new_city)
+    dist2 = distance(city_b, new_city)
+    if dist1 < dist2:
+         return get_name(city_a)
+    return get_name(city_b)
 
 
 def check_city_abstraction():
@@ -160,28 +162,20 @@ def berry_finder(t):
     >>> berry_finder(t)
     True
     """
-    "*** YOUR CODE HERE ***"
-    # if t == []:
-    #     return False
-    # if label(t) == 'berry':
-    #     return True
-    # else:
-    #     for b in branches(t):
-    #         if label(b) == 'berry':
-    #             return True
-    #         else:
-    #             return berry_finder(b[1:])
-    #     return False
     if label(t) == 'berry':
         return True
-    for branch in branches(t):
-        if label(branch) == 'berry':
+    for b in branches(t):
+        if berry_finder(b):
             return True
-        elif is_leaf(branch):
-            continue
-        else:
-            return berry_finder(branch)
     return False
+
+# Alternative solution
+
+
+def berry_finder_alt(t):
+    if label(t) == 'berry':
+        return True
+    return True in [berry_finder(b) for b in branches(t)]
 
 
 def sprout_leaves(t, leaves):
@@ -217,51 +211,9 @@ def sprout_leaves(t, leaves):
           1
           2
     """
-    "*** YOUR CODE HERE ***"
-    # newTree = copy_tree(t)
-    # for b in branches(newTree):
-    # if is_leaf(b):
-    #     b = b + tree(leaves) #只会更改迭代变量的引用，而不会更新原始树的结构。
-    # else:
-    #     sprout_leaves(b,leaves)
-
-    # for i in range(len(branches(newTree))):
-    #     if is_leaf(branches(newTree)[i]):
-    #         branches(newTree)[i] = branches(newTree)[i] + tree(leaves)
-    #     else:
-    #         branches(newTree)[i] = sprout_leaves(branches(newTree)[i],leaves)
-    # return newTree
-
-    # 首先检查当前节点是否是叶子。
-    # 如果是叶子，则构建一个新的子树列表，其中每个叶子都被转换为一个带有新叶子的树节点。
-    # 如果当前节点不是叶子，则递归地处理每个子树，并构建一个具有新分支的树。
-    # if is_leaf(t):
-    #     return tree(label(t), [tree(leaf) for leaf in leaves])
-    # else:
-    #     new_branches = [sprout_leaves(branch, leaves)
-    #                     for branch in branches(t)]
-    #     return tree(label(t), new_branches)
-    # newbranches = []
-    # for leave in leaves:
-    #     newbranches = newbranches + [tree(leave)]
-
-    # if is_leaf(t):
-    #     t = tree(t, newbranches)
-    # else:
-    #     # for branch in branches(t)[:]:
-    #     #     if is_leaf(branch):
-    #     #         branch = tree(branch, newbranches)
-    #     i = 0
-    #     while i < len(branches(t)):
-    #         if is_leaf(branches(t)[i]):
-    #             branches(t)[i] = tree(branches(t)[i],newbranches)
-    #         i = i + 1
-    # return t
-
     if is_leaf(t):
         return tree(label(t), [tree(leaf) for leaf in leaves])
-    else:
-        return tree(label(t), [sprout_leaves(branch, leaves) for branch in branches(t)])
+    return tree(label(t), [sprout_leaves(s, leaves) for s in branches(t)])
 
 # Abstraction tests for sprout_leaves and berry_finder
 
@@ -324,14 +276,20 @@ def preorder(t):
     >>> preorder(tree(2, [tree(4, [tree(6)])]))
     [2, 4, 6]
     """
-    "*** YOUR CODE HERE ***"
-    if is_leaf(t):
+    if branches(t) == []:
         return [label(t)]
-    else:
-        result = [label(t)]
-        for branch in branches(t):
-            result.extend(preorder(branch))
-        return result
+    flattened_branches = []
+    for child in branches(t):
+        flattened_branches += preorder(child)
+    return [label(t)] + flattened_branches
+
+
+# Alternate solution
+from functools import reduce
+
+
+def preorder_alt(t):
+    return reduce(add, [preorder_alt(child) for child in branches(t)], [label(t)])
 
 
 def add_trees(t1, t2):
@@ -369,35 +327,41 @@ def add_trees(t1, t2):
         5
       5
     """
-    "*** YOUR CODE HERE ***"
-    # newTree = tree(None)
-    # if label(t1) and label(t2):
-    #     newTree = tree(label(t1)+label(t2),add_trees(branches(t1),branches(t2)))
-    # elif label(t1):
-    #     newTree = tree(label(t1),branches(t1))
-    # elif label(t2):
-    #     newTree = tree(t2,branches(t2))
-    # else:
-    #     return newTree
-    
+    # Base case one (or both) are a leaf
+    if is_leaf(t1) or is_leaf(t2):
+        # Branches will be an empty list for the tree which is a leaf
+        return tree(label(t1) + label(t2), branches(t2) + branches(t1))
+    else:
+        new_branches = []
+
+        # Recursively call add_trees when both t1 and t2 have a branch
+        for i in range(min(len(branches(t1)), len(branches(t2)))):
+            new_branches += [add_trees(branches(t1)[i], branches(t2)[i])]
+        # Now add the leftover branches to new_branches
+        for i in range(min(len(branches(t1)), len(branches(t2))), max(len(branches(t1)), len(branches(t2)))):
+            if len(branches(t1)) > len(branches(t2)):
+                new_branches += [branches(t1)[i]]
+            else:
+                new_branches += [branches(t2)[i]]
+
+    return tree(label(t1) + label(t2), new_branches)
+
+# Alternative solution using zip
+
+
+def add_trees_alternate(t1, t2):
     if not t1:
         return t2
     if not t2:
         return t1
-    
-    len_t1, len_t2 = len(branches(t1)), len(branches(t2))
-    
-    if len_t1 < len_t2:
-        # 补齐 t1 的子树列表
-        t1 = tree(label(t1), branches(t1) + [tree(0)] * (len_t2 - len_t1))
-    elif len_t2 < len_t1:
-        # 补齐 t2 的子树列表
-        t2 = tree(label(t2), branches(t2) + [tree(0)] * (len_t1 - len_t2))
-    new_label = label(t1)+label(t2)
-    new_branch = [add_trees(b1, b2)
-                  for b1, b2 in zip(branches(t1), branches(t2))]
-    return tree(new_label, new_branch)
-    
+    new_label = label(t1) + label(t2)
+    t1_branches, t2_branches = branches(t1), branches(t2)
+    length_t1, length_t2 = len(t1_branches), len(t2_branches)
+    if length_t1 < length_t2:
+        t1_branches += [None for _ in range(length_t1, length_t2)]
+    elif length_t1 > length_t2:
+        t2_branches += [None for _ in range(length_t2, length_t1)]
+    return tree(new_label, [add_trees(branch1, branch2) for branch1, branch2 in zip(t1_branches, t2_branches)])
 
 
 def change_abstraction(change):
