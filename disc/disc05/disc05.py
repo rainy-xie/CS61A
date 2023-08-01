@@ -24,8 +24,9 @@ def my_filter(pred, seq):
             temp.append(i)
     return temp
 
-#One-liner solution 
+# One-liner solution
 #   return[fn(elem)foreleminseq]
+
 
 def my_reduce(combiner, seq):
     """Combines elements in seq using combiner.
@@ -42,7 +43,7 @@ def my_reduce(combiner, seq):
     "*** YOUR CODE HERE ***"
     total = seq[0]
     for i in seq[1:]:
-        total = combiner(total,i)
+        total = combiner(total, i)
     return total
 
 
@@ -54,7 +55,30 @@ def count_palindromes(L):
     >>> count_palindromes(["101", "rAcECaR", "much", "wow"])
     3
     """
-    return len(my_filter(lambda s: s.lower() == s[::-1].lower(),L ))
+    return len(my_filter(lambda s: s.lower() == s[::-1].lower(), L))
+
+
+def tree(label, branches=[]):
+    """Construct a tree with the given label value and a list of branches."""
+    return [label] + list(branches)
+
+
+def label(tree):
+    """Return the label value of a tree."""
+    return tree[0]
+
+
+def branches(tree):
+    """Return the list of branches of the given tree."""
+    return tree[1:]
+
+
+def is_leaf(tree):
+    """Returns True if the given tree's list of branches is empty, and False
+    otherwise.
+    """
+    return not branches(tree)
+
 
 def height(t):
     """Return the height of a tree.
@@ -71,6 +95,12 @@ def height(t):
         return 0
     return 1 + max([height(branch) for branch in branches(t)])
 
+# def my_height(t):
+#     if is_leaf(t):
+#         return 0;
+#     else:
+#         return 1 + branches(t)
+
 
 def max_path_sum(t):
     """Return the maximum path sum of the tree.
@@ -84,8 +114,8 @@ def max_path_sum(t):
         return label(t)
     else:
         return label(t) + max([max_path_sum(b) for b in branches(t)])
-    
-    
+
+
 def find_path(t, x):
     """
     >>> t = tree(2, [tree(7, [tree(3), tree(6, [tree(5), tree(11)])] ), tree(15)])
@@ -93,10 +123,10 @@ def find_path(t, x):
     [2, 7, 6, 5]
     >>> find_path(t, 10)  # returns None
     """
-    if label(t)==x:
+    if label(t) == x:
         return [label(t)]
     for b in branches(t):
-        path = find_path(b,x)
+        path = find_path(b, x)
         if path:
             return [label(t)] + path
 
@@ -109,5 +139,65 @@ def sum_tree(t):
     15
     """
     "*** YOUR CODE HERE ***"
-    
+    if is_leaf(t):
+        return label(t)
+    else:
+        return label(t) + sum(sum_tree(b) for b in branches(t))
 
+
+def balanced(t):
+    """
+    Checks if each branch has same sum of all elements and
+    if each branch is balanced.
+    >>> t = tree(1, [tree(3), tree(1, [tree(2)]), tree(1, [tree(1), tree(1)])])
+    >>> balanced(t)
+    True
+    >>> t = tree(1, [t, tree(1)])
+    >>> balanced(t)
+    False
+    >>> t = tree(1, [tree(4), tree(1, [tree(2), tree(1)]), tree(1, [tree(3)])])
+    >>> balanced(t)
+    False
+    """
+    "*** YOUR CODE HERE ***"
+    # if is_leaf(t):
+    #     return False
+    # else:
+    #     for b in branches(t):
+    #         sum_b = sum_tree(b)
+    for b in branches(t):
+        if sum_tree(branches(t)[0])
+
+
+def hailstone_tree(n, h):
+    """Generates a tree of hailstone numbers that will reach N, with height H.
+    >>> print_tree(hailstone_tree(1, 0))
+    1
+    >>> print_tree(hailstone_tree(1, 4))
+    1
+        2
+            4
+                8
+                    16
+    >>> print_tree(hailstone_tree(8, 3))
+    8
+        16
+            32
+                64
+            5
+                10
+    """
+    if _________________________________:
+        return _________________________________
+    branches = _________________________________
+    if ___________ and ___________ and ___________:
+        branches += _________________________________
+    return tree(n, branches)
+
+
+def print_tree(t):
+    def helper(i, t):
+        print("    " * i + str(label(t)))
+        for b in branches(t):
+            helper(i + 1, b)
+    helper(0, t)
