@@ -160,14 +160,19 @@ def balanced(t):
     False
     """
     "*** YOUR CODE HERE ***"
-    # if is_leaf(t):
-    #     return False
-    # else:
-    #     for b in branches(t):
-    #         sum_b = sum_tree(b)
-    for b in branches(t):
-        if sum_tree(branches(t)[0])
+    if is_leaf(t):
+        return True
+    else:
+        # sum_branch = []
+        # for b in branches(t):
+        #     sum_branch += [sum_tree(b)]
+        sum_branch = [sum_tree(b) for b in branches(t)]
+        if len(set(sum_branch))>1:
+            return False
+        
+    return all(balanced(b) for b in branches(t))
 
+        
 
 def hailstone_tree(n, h):
     """Generates a tree of hailstone numbers that will reach N, with height H.
@@ -187,11 +192,11 @@ def hailstone_tree(n, h):
             5
                 10
     """
-    if _________________________________:
-        return _________________________________
-    branches = _________________________________
-    if ___________ and ___________ and ___________:
-        branches += _________________________________
+    if h == 0:
+        return tree(n)
+    branches = [hailstone_tree(n*2,h-1)]
+    if (n-1)%3==0 and ((n-1)//3)%2==1 and (n-1)//3 >1:
+        branches += [hailstone_tree((n-1)//3, h-1)]
     return tree(n, branches)
 
 
