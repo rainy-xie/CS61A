@@ -9,6 +9,7 @@ def my_map(fn, seq):
         temp.append(fn(i))
     return temp
 
+
 # my_map(lambda x: x*x, [1, 2, 3])
 
 
@@ -23,6 +24,7 @@ def my_filter(pred, seq):
         if pred(i):
             temp.append(i)
     return temp
+
 
 # One-liner solution
 #   return[fn(elem)foreleminseq]
@@ -94,6 +96,7 @@ def height(t):
     if is_leaf(t):
         return 0
     return 1 + max([height(branch) for branch in branches(t)])
+
 
 # def my_height(t):
 #     if is_leaf(t):
@@ -167,12 +170,11 @@ def balanced(t):
         # for b in branches(t):
         #     sum_branch += [sum_tree(b)]
         sum_branch = [sum_tree(b) for b in branches(t)]
-        if len(set(sum_branch))>1:
+        if len(set(sum_branch)) > 1:
             return False
-        
+
     return all(balanced(b) for b in branches(t))
 
-        
 
 def hailstone_tree(n, h):
     """Generates a tree of hailstone numbers that will reach N, with height H.
@@ -194,9 +196,9 @@ def hailstone_tree(n, h):
     """
     if h == 0:
         return tree(n)
-    branches = [hailstone_tree(n*2,h-1)]
-    if (n-1)%3==0 and ((n-1)//3)%2==1 and (n-1)//3 >1:
-        branches += [hailstone_tree((n-1)//3, h-1)]
+    branches = [hailstone_tree(n * 2, h - 1)]
+    if (n - 1) % 3 == 0 and ((n - 1) // 3) % 2 == 1 and (n - 1) // 3 > 1:
+        branches += [hailstone_tree((n - 1) // 3, h - 1)]
     return tree(n, branches)
 
 
@@ -205,4 +207,5 @@ def print_tree(t):
         print("    " * i + str(label(t)))
         for b in branches(t):
             helper(i + 1, b)
+
     helper(0, t)
