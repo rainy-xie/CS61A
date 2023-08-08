@@ -46,15 +46,21 @@ def berry_finder(t):
     True
     """
     "*** YOUR CODE HERE ***"
+    # if label(t) == 'berry':
+    #     return True
+    # for branch in branches(t):
+    #     if label(branch) == 'berry':
+    #         return True
+    #     elif is_leaf(branch):
+    #         continue
+    #     else:
+    #         return berry_finder(branch)
+    # return False
     if label(t) == 'berry':
         return True
     for branch in branches(t):
-        if label(branch) == 'berry':
+        if berry_finder(branch):
             return True
-        elif is_leaf(branch):
-            continue
-        else:
-            return berry_finder(branch)
     return False
 
 

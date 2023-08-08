@@ -379,14 +379,14 @@ def add_trees(t1, t2):
     #     newTree = tree(t2,branches(t2))
     # else:
     #     return newTree
-    
+
     if not t1:
         return t2
     if not t2:
         return t1
-    
+
     len_t1, len_t2 = len(branches(t1)), len(branches(t2))
-    
+
     if len_t1 < len_t2:
         # 补齐 t1 的子树列表
         t1 = tree(label(t1), branches(t1) + [tree(0)] * (len_t2 - len_t1))
@@ -397,7 +397,6 @@ def add_trees(t1, t2):
     new_branch = [add_trees(b1, b2)
                   for b1, b2 in zip(branches(t1), branches(t2))]
     return tree(new_label, new_branch)
-    
 
 
 def change_abstraction(change):
