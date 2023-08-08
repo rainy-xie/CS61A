@@ -3,9 +3,10 @@ test = {
   'points': 0,
   'suites': [
     {
+      'type': 'wwpp',
       'cases': [
         {
-          'code': r"""
+          'code': """
           >>> s = [1, 2, 3, 4]
           >>> t = iter(s)
           >>> next(s)
@@ -27,12 +28,9 @@ test = {
           >>> next(t)
           StopIteration
           """,
-          'hidden': False,
-          'locked': False,
-          'multiline': False
         },
         {
-          'code': r"""
+          'code': """
           >>> r = range(6)
           >>> r_iter = iter(r)
           >>> next(r_iter)
@@ -46,12 +44,9 @@ test = {
           >>> list(range(-2, 4))   # Converts an iterable into a list
           [-2, -1, 0, 1, 2, 3]
           """,
-          'hidden': False,
-          'locked': False,
-          'multiline': False
         },
         {
-          'code': r"""
+          'code': """
           >>> map_iter = map(lambda x : x + 10, range(5))
           >>> next(map_iter)
           10
@@ -73,13 +68,8 @@ test = {
           (11, 3)
           (10, 4)
           """,
-          'hidden': False,
-          'locked': False,
-          'multiline': False
         }
-      ],
-      'scored': False,
-      'type': 'wwpp'
+      ]
     }
   ]
 }

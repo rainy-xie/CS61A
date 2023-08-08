@@ -29,14 +29,23 @@ def insert_items(lst, entry, elem):
     ...       ['List', 'ListComp', 'Slice'])
     True
     """
-    "*** YOUR CODE HERE ***"
-    i = 0
-    while i < len(lst):
-        if lst[i] == entry:
-            lst.insert(i+1, elem)
-            i += 2
+    index = 0
+    while index < len(lst):
+        if lst[index] == entry:
+            lst.insert(index + 1, elem)
+            if entry == elem:
+                index += 1
+        index += 1
+    return lst
+
+    # Alternative solution
+    index = 0
+    while index < len(lst):
+        if lst[index] == entry:
+            lst.insert(index + 1, elem)
+            index += 2
         else:
-            i += 1
+            index += 1
     return lst
 
 
@@ -60,14 +69,12 @@ def count_occurrences(t, n, x):
     >>> count_occurrences(s2, 6, 6)
     2
     """
-    "*** YOUR CODE HERE ***"
-    # count = 0
-    # for i in range(n):
-    #     new = next(t)
-    #     if new == x:
-    #         count += 1
-    # return count
-    return len([1 for i in range(n) if next(t) == x])
+    count = 0
+    for _ in range(n):
+        value = next(t)
+        if value == x:
+            count += 1
+    return count
 
 
 def repeated(t, k):
@@ -92,28 +99,14 @@ def repeated(t, k):
     2
     """
     assert k > 1
-    "*** YOUR CODE HERE ***"
-    
-    #ok:
-    # first_value = next(t)
-    # k = k -1
-    # repeated = k
-    # for next_value in t:
-    #     if first_value == next_value:
-    #         k = k - 1
-    #         if k == 0:
-    #             return first_value
-    #     else:
-    #         first_value = next_value
-    #         k = repeated
-
-    first_value = next(t)
     count = 1
-    for next_value in t:
-        if first_value == next_value:
+    last_item = None
+    while True:
+        item = next(t)
+        if item == last_item:
             count += 1
-            if k == count:
-                return first_value
         else:
-            first_value = next_value
+            last_item = item
             count = 1
+        if count == k:
+            return item

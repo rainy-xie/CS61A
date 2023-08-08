@@ -3,9 +3,10 @@ test = {
   'points': 0,
   'suites': [
     {
+      'type': 'wwpp',
       'cases': [
         {
-          'code': r"""
+          'code': """
           >>> # If nothing would be output by Python, type Nothing
           >>> # If the code would error, type Error
           >>> lst = [5, 6, 7, 8]
@@ -36,14 +37,9 @@ test = {
           >>> lst.extend([lst.append(9), lst.append(10)])
           >>> lst
           [1, 2, 3, 4, 5, 9, 10, None, None]
-          """,
-          'hidden': False,
-          'locked': False,
-          'multiline': False
+          """
         }
-      ],
-      'scored': False,
-      'type': 'wwpp'
+      ]
     }
   ]
 }
