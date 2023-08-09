@@ -143,10 +143,6 @@ def preorder(t):
         return result
 
 
-numbers = tree(1, [tree(2), tree(3, [tree(4), tree(5)]), tree(6, [tree(7)])])
-preorder(numbers)
-
-
 def add_trees(t1, t2):
     """
     >>> numbers = tree(1,

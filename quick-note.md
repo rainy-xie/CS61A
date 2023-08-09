@@ -15,7 +15,10 @@ reversed(iterable) - Creates an iterator over all the elements in the input iter
 list(iterable) - Creates a list containing all the elements in the input iterable
 tuple(iterable) - Creates a tuple containing all the elements in the input iterable
 sorted(iterable) - Creates a sorted list containing all the elements in the input iterable
-reduce(f, iterable) - Must be imported with functools. Apply function of two arguments f cumulatively to the items of iterable, from left to right, so as to reduce the sequence to a single value.
+reduce(f, iterable) - Must be imported with functools. Apply function of two arguments f cumulatively to the items of iterable, from2 left to right, so as to reduce the sequence to a single value.
 ```
 
 Python's built-in `map`, `filter`, and `zip` functions return **iterators**, not lists.
+
+Notice that calling `iter` on a generator object doesn't create a new bookmark, but simply returns the existing generator object!
+
