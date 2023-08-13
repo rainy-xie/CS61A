@@ -59,6 +59,12 @@ def gen_perms(seq):
     [['a', 'b'], ['b', 'a']]
     """
     "*** YOUR CODE HERE ***"
+    if not seq:
+        yield []
+    else:
+        for perm in gen_perms(seq[1:]):  # 要相信它会返回一个有序的数列
+            for i in range(len(seq[1:])):
+                yield perm[:i] + [seq[0]] + perm[i:]
 
 
 def yield_paths(t, value):
@@ -98,8 +104,17 @@ def yield_paths(t, value):
     "*** YOUR CODE HERE ***"
   # like disc05 find_path
     if label(t) == value:
-        yield [label(t)]
+        yield [value]
     for b in branches(t):
+        # disc 05 的简单替换，错在不能把一个生成器对象和列表相加 [label(t)] + path
+        # path = yield_paths(b,value)
+        # if path:
+        #     yield [label(t)] + path
+        # 改为：
+        # path_gen = yield_paths(b,value)
+        # for path in path_gen:
+        #     yield [label(t)] + path
+        # 平替：
         for path in yield_paths(b, value):
             yield [label(t)] + path
 
