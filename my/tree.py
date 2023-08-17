@@ -23,10 +23,23 @@ def is_tree(tree):
 
 
 def is_leaf(tree):
-    return not branches(tree)
+    # return not branches(tree)
+    return type(tree) != list
+
+
+def right_binarize(tree):
+    """Construct a right-branching binary tree."""
+    if is_leaf(tree):
+        return tree
+    if len(tree) > 2:
+        tree = [tree[0], tree[1:]]
+    return [right_binarize(b) for b in tree]
+
+
+right_binarize([1, 2, 3, 4, 5, 6, 7])
+
 
 # lab05 Trees
-
 
 def berry_finder(t):
     """Returns True if t contains a node with the value 'berry' and

@@ -72,6 +72,8 @@ class Card:
 
 
 class Player:
+    hand = []
+
     def __init__(self, deck, name):
         """Initialize a Player object.
         A Player starts the game by drawing 5 cards from their deck. Each turn,
@@ -87,6 +89,7 @@ class Player:
         self.deck = deck
         self.name = name
         "*** YOUR CODE HERE ***"
+        self.hand = [self.deck.draw() for _ in range(5)]
 
     def draw(self):
         """Draw a card from the player's deck and add it to their hand.
@@ -101,6 +104,7 @@ class Player:
         """
         assert not self.deck.is_empty(), 'Deck is empty!'
         "*** YOUR CODE HERE ***"
+        self.hand.append(self.deck.draw())
 
     def play(self, index):
         """Remove and return a card from the player's hand at the given INDEX.
@@ -117,6 +121,7 @@ class Player:
         2
         """
         "*** YOUR CODE HERE ***"
+        return self.hand.pop(index)
 
     def display_hand(self):
         """
@@ -162,7 +167,9 @@ class AICard(Card):
         True
         """
         "*** YOUR CODE HERE ***"
-        implemented = False
+        player.draw()
+        player.draw()
+        implemented = True
         # You should add your implementation above this.
         if implemented:
             print(f"{self.name} allows me to draw two cards!")
@@ -205,13 +212,18 @@ class TutorCard(Card):
         True
         """
         "*** YOUR CODE HERE ***"
-        added = False
+        if player.hand:
+            player.hand += player.hand[0]
+        player.self.power()
+        added = True
         # You should add your implementation above this.
         if added:
             print(f"{self.name} allows me to add a copy of a card to my hand!")
 
     "*** YOUR CODE HERE ***"
-
+    def power(self,opponent_card):
+        return -float('inf')
+    
     def copy(self):
         """
         Create a copy of this card.
