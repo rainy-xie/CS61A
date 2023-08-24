@@ -3,7 +3,8 @@ import ants_strategies
 import utils
 import state
 import json
-import distutils.core
+# import distutils.core
+import setuptools
 import urllib.request
 import os
 import shutil
