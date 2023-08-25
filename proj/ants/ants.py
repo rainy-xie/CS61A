@@ -72,7 +72,8 @@ class Insect:
         self.health -= amount
         if self.health <= 0:
             self.death_callback()
-            self.place.remove_insect(self)
+        # if self.place is not None:
+        self.place.remove_insect(self)
 
     def action(self, gamestate):
         """The action performed each turn.
@@ -180,6 +181,8 @@ class ThrowerAnt(Ant):
     implemented = True
     damage = 1
     food_cost = 3
+    lower_bound = 0
+    upper_bound = float('inf')
     # ADD/OVERRIDE CLASS ATTRIBUTES HERE
 
     def nearest_bee(self):
@@ -191,12 +194,14 @@ class ThrowerAnt(Ant):
         # BEGIN Problem 3 and 4
         # return random_bee(self.place.bees)  # REPLACE THIS LINE
         temp_place = self.place
+        distance = 0
         while temp_place:
             if temp_place.is_hive:
                 return None
-            if temp_place.bees:
+            if temp_place.bees and self.lower_bound <= distance <= self.upper_bound:
                 return random_bee(temp_place.bees)
             temp_place = temp_place.entrance
+            distance += 1
         return None
         # END Problem 3 and 4
 
@@ -227,9 +232,10 @@ class ShortThrower(ThrowerAnt):
 
     name = 'Short'
     food_cost = 2
+    upper_bound = 3
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem 4
-    implemented = False   # Change to True to view in the GUI
+    implemented = True  # Change to True to view in the GUI
     # END Problem 4
 
 
@@ -238,9 +244,10 @@ class LongThrower(ThrowerAnt):
 
     name = 'Long'
     food_cost = 2
+    lower_bound = 5
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem 4
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
     # END Problem 4
 
 
@@ -252,7 +259,7 @@ class FireAnt(Ant):
     food_cost = 5
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem 5
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
     # END Problem 5
 
     def __init__(self, health=3):
@@ -268,6 +275,21 @@ class FireAnt(Ant):
         """
         # BEGIN Problem 5
         "*** YOUR CODE HERE ***"
+        current_place = self.place
+        bees_copy = list(self.place.bees)
+        super().reduce_health(amount)
+        for bee in bees_copy:
+            bee.health -= amount
+            if bee.health <= 0 and bee in current_place.bees:
+                current_place.remove_insect(bee)
+
+        if self.health <= 0:
+            self.death_callback()
+            for bee in bees_copy:
+                bee.health -= self.damage
+                if bee.health <= 0 and bee in current_place.bees:
+                    current_place.remove_insect(bee)
+
         # END Problem 5
 
 # BEGIN Problem 6
