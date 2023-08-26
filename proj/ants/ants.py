@@ -43,8 +43,7 @@ class Place:
         Asks the insect to remove itself from the current place. This method exists so
             it can be enhanced in subclasses.
         """
-        if insect.name != 'Queen':
-            insect.remove_from(self)
+        insect.remove_from(self)
 
     def __str__(self):
         return self.name
@@ -109,6 +108,7 @@ class Ant(Insect):
     food_cost = 0
     is_container = False
     is_doubled = False
+    blocks_path = True
     # ADD CLASS ATTRIBUTES HERE
 
     def __init__(self, health=1):
@@ -513,11 +513,14 @@ class QueenAnt(ScubaThrower):  # You should change this line
         """
         # BEGIN Problem 12
         "*** YOUR CODE HERE ***"
-        self.health -= amount
+        #self.health -= amount
+        super().reduce_health(amount)
         if self.health <= 0:
             ants_lose()
         # END Problem 12
-
+        
+    def remove_from(self, place):
+        pass
 
 class AntRemover(Ant):
     """Allows the player to remove ants from the board in the GUI."""
@@ -550,7 +553,7 @@ class Bee(Insect):
         """Return True if this Bee cannot advance to the next Place."""
         # Special handling for NinjaAnt
         # BEGIN Problem Optional 1
-        return self.place.ant is not None
+        return self.place.ant is not None and self.place.ant.blocks_path
         # END Problem Optional 1
 
     def action(self, gamestate):
@@ -589,12 +592,15 @@ class NinjaAnt(Ant):
     food_cost = 5
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem Optional 1
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
+    blocks_path = False
     # END Problem Optional 1
 
     def action(self, gamestate):
         # BEGIN Problem Optional 1
         "*** YOUR CODE HERE ***"
+        for bee in self.place.bees[:]:
+            bee.reduce_health(self.damage)
         # END Problem Optional 1
 
 ############
@@ -608,17 +614,26 @@ class SlowThrower(ThrowerAnt):
     name = 'Slow'
     food_cost = 6
     # BEGIN Problem EC
-    remain_times = 5
+    remain_times = 0
     implemented = True   # Change to True to view in the GUI
-    def __init__(self, health=1,damage=0):
-        super().__init__(health,damage)
+
     # END Problem EC
 
     def throw_at(self, target):
 
         # BEGIN Problem EC
         "*** YOUR CODE HERE ***"
-        
+        origin_action = target.action
+
+        def new_action(gamestate):
+            if gamestate.time % 2 == 0:
+                origin_action(gamestate)
+            if self.remain_times > 0:
+                self.remain_times -= 1
+            if self.remain_times == 0:
+                target.action = origin_action
+        target.action = new_action
+        self.remain_times = 5
         # END Problem EC
 
 
@@ -627,9 +642,10 @@ class LaserAnt(ThrowerAnt):
 
     name = 'Laser'
     food_cost = 10
+    damage = 2
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem Optional 2
-    implemented = False   # Change to True to view in the GUI
+    implemented = True  # Change to True to view in the GUI
     # END Problem Optional 2
 
     def __init__(self, health=1):
@@ -638,12 +654,29 @@ class LaserAnt(ThrowerAnt):
 
     def insects_in_front(self):
         # BEGIN Problem Optional 2
-        return {}
+        distance=0
+        insect_front={}
+        infront_place=self.place
+        while not infront_place.is_hive:
+            if infront_place.bees:
+                for bee in infront_place.bees:
+                    insect_front[bee]=distance
+            if infront_place.ant and infront_place.ant is not self:# 注意这一点,不要把它自己加进去,要不然伤害会降低
+                insect_front[infront_place.ant]=distance
+            distance+=1
+            infront_place=infront_place.entrance
+        return insect_front
         # END Problem Optional 2
 
     def calculate_damage(self, distance):
-        # BEGIN Problem Optional 2
-        return 0
+        move_down_damage=0.25
+        cause_down_damage=0.0625
+        total_damage=self.damage-move_down_damage*distance-cause_down_damage*self.insects_shot
+        if total_damage<0:
+            return 0
+        else:
+            return total_damage
+
         # END Problem Optional 2
 
     def action(self, gamestate):
