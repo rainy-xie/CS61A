@@ -43,7 +43,8 @@ class Place:
         Asks the insect to remove itself from the current place. This method exists so
             it can be enhanced in subclasses.
         """
-        insect.remove_from(self)
+        if insect.name != 'Queen':
+            insect.remove_from(self)
 
     def __str__(self):
         return self.name
@@ -107,6 +108,7 @@ class Ant(Insect):
     implemented = False  # Only implemented Ant classes should be instantiated
     food_cost = 0
     is_container = False
+    is_doubled = False
     # ADD CLASS ATTRIBUTES HERE
 
     def __init__(self, health=1):
@@ -160,6 +162,9 @@ class Ant(Insect):
         """Double this ants's damage, if it has not already been doubled."""
         # BEGIN Problem 12
         "*** YOUR CODE HERE ***"
+        if not self.is_doubled:
+            self.damage *= 2
+            self.is_doubled = True
         # END Problem 12
 
 
@@ -445,11 +450,14 @@ class Water(Place):
 
 # BEGIN Problem 11
 # The ScubaThrower class
+
+
 class ScubaThrower(ThrowerAnt):
     name = "Scuba"
     food_cost = 6
     implemented = True
     is_waterproof = True
+
     def __init__(self, health=1):
         super().__init__(health)
 # END Problem 11
@@ -476,6 +484,11 @@ class QueenAnt(ScubaThrower):  # You should change this line
         """
         # BEGIN Problem 12
         "*** YOUR CODE HERE ***"
+        if not gamestate.have_queen:
+            gamestate.have_queen = True
+            return super().construct(gamestate)
+        else:
+            return None
         # END Problem 12
 
     def action(self, gamestate):
@@ -484,6 +497,14 @@ class QueenAnt(ScubaThrower):  # You should change this line
         """
         # BEGIN Problem 12
         "*** YOUR CODE HERE ***"
+        super().action(gamestate)
+        temp = self.place
+        while temp.exit:
+            if temp.exit.ant:
+                temp.exit.ant.double()
+                if temp.exit.ant.is_container and temp.exit.ant.ant_contained:
+                    temp.exit.ant.ant_contained.double()
+            temp = temp.exit
         # END Problem 12
 
     def reduce_health(self, amount):
@@ -492,6 +513,9 @@ class QueenAnt(ScubaThrower):  # You should change this line
         """
         # BEGIN Problem 12
         "*** YOUR CODE HERE ***"
+        self.health -= amount
+        if self.health <= 0:
+            ants_lose()
         # END Problem 12
 
 
@@ -584,13 +608,17 @@ class SlowThrower(ThrowerAnt):
     name = 'Slow'
     food_cost = 6
     # BEGIN Problem EC
-    implemented = False   # Change to True to view in the GUI
+    remain_times = 5
+    implemented = True   # Change to True to view in the GUI
+    def __init__(self, health=1,damage=0):
+        super().__init__(health,damage)
     # END Problem EC
 
     def throw_at(self, target):
 
         # BEGIN Problem EC
         "*** YOUR CODE HERE ***"
+        
         # END Problem EC
 
 
@@ -735,6 +763,7 @@ class GameState:
         self.configure(beehive, create_places)
         # BEGIN Problem 12
         "*** YOUR CODE HERE ***"
+        self.have_queen = False
         # END Problem 12
 
     def configure(self, beehive, create_places):
