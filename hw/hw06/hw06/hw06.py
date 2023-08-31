@@ -29,12 +29,14 @@ class Mint:
     """
     present_year = 2022
     year = 0
+
     def __init__(self):
         self.update()
 
     def create(self, coin):
         "*** YOUR CODE HERE ***"
         return coin(self.year)
+
     def update(self):
         "*** YOUR CODE HERE ***"
         self.year = Mint.present_year
@@ -48,7 +50,7 @@ class Coin:
 
     def worth(self):
         "*** YOUR CODE HERE ***"
-        return self.cents + max(0,Mint.present_year-self.year - 50)
+        return self.cents + max(0, Mint.present_year-self.year - 50)
 
 
 class Nickel(Coin):
@@ -76,7 +78,11 @@ def store_digits(n):
     >>> link1 = Link(3, Link(Link(4), Link(5, Link(6))))
     """
     "*** YOUR CODE HERE ***"
-
+    s = Link.empty
+    while n:
+        s = Link(n % 10, s)
+        n = n // 10
+    return s
 
 def deep_map_mut(func, lnk):
     """Mutates a deep link lnk by replacing each item found with the
@@ -96,6 +102,7 @@ def deep_map_mut(func, lnk):
     <9 <16> 25 36>
     """
     "*** YOUR CODE HERE ***"
+    
 
 
 def two_list(vals, counts):
