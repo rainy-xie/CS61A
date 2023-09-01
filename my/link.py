@@ -48,7 +48,7 @@ def filter_link(f, s):
         return filter_rest
 
 
-def store_digits(n,current_link):
+def store_digits(n, current_link):
     """Stores the digits of a positive number n in a linked list.
 
     >>> s = store_digits(1)
@@ -70,7 +70,7 @@ def store_digits(n,current_link):
     #     s = Link(n % 10, s)
     #     n = n // 10
     # return s
-    
+
     # if n == 0:
     #     return Link.empty
     # else:
@@ -87,8 +87,8 @@ def store_digits(n,current_link):
     else:
         new_link = Link(n % 10, current_link)
         return store_digits(n // 10, new_link)
-    
-    
+
+
 def deep_map_mut(func, lnk):
     """Mutates a deep link lnk by replacing each item found with the
     result of calling func on the item.  Does NOT create new Links (so
@@ -107,4 +107,42 @@ def deep_map_mut(func, lnk):
     <9 <16> 25 36>
     """
     "*** YOUR CODE HERE ***"
-    
+    if lnk is Link.empty:
+        return lnk
+    if isinstance(lnk.first, Link):
+        return Link(deep_map_mut(func, lnk.first), deep_map_mut(func, lnk.rest))
+    return Link(func(lnk.first), deep_map_mut(func, lnk.rest))
+
+
+def two_list(vals, counts):
+    """
+    Returns a linked list according to the two lists that were passed in. Assume
+    vals and counts are the same size. Elements in vals represent the value, and the
+    corresponding element in counts represents the number of this value desired in the
+    final linked list. Assume all elements in counts are greater than 0. Assume both
+    lists have at least one element.
+
+    >>> a = [1, 3, 2]
+    >>> b = [1, 1, 1]
+    >>> c = two_list(a, b)
+    >>> c
+    Link(1, Link(3, Link(2)))
+    >>> a = [1, 3, 2]
+    >>> b = [2, 2, 1]
+    >>> c = two_list(a, b)
+    >>> c
+    Link(1, Link(1, Link(3, Link(3, Link(2)))))
+    """
+    "*** YOUR CODE HERE ***"
+    result = Link(None)
+    for count in counts:
+        index = 0
+        for _ in range(count):
+            if result is Link.empty:
+                result = Link(vals[index])
+            temp = result.rest
+            while temp:
+                temp = temp.rest
+            temp.rest = Link(vals[index])
+        index += 1
+    return result

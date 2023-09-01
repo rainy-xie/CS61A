@@ -84,6 +84,7 @@ def store_digits(n):
         n = n // 10
     return s
 
+
 def deep_map_mut(func, lnk):
     """Mutates a deep link lnk by replacing each item found with the
     result of calling func on the item.  Does NOT create new Links (so
@@ -102,7 +103,20 @@ def deep_map_mut(func, lnk):
     <9 <16> 25 36>
     """
     "*** YOUR CODE HERE ***"
-    
+    # ok 但是会创建新的Link，不符合题目要求
+    # if lnk is Link.empty:
+    #     return lnk
+    # if isinstance(lnk.first, Link):
+    #     return Link(deep_map_mut(func, lnk.first),deep_map_mut(func,lnk.rest))
+    # return Link(func(lnk.first), deep_map_mut(func, lnk.rest))
+    if lnk is Link.empty:
+        return lnk
+    if isinstance(lnk.first, Link):
+        lnk.first = deep_map_mut(func, lnk.first)
+    if isinstance(lnk.first, int):
+        lnk.first = func(lnk.first)
+    lnk.rest = deep_map_mut(func, lnk.rest)
+    return lnk
 
 
 def two_list(vals, counts):
@@ -125,6 +139,13 @@ def two_list(vals, counts):
     Link(1, Link(1, Link(3, Link(3, Link(2)))))
     """
     "*** YOUR CODE HERE ***"
+    dummy_head = Link(None)
+    current = dummy_head
+    for val, count in zip(vals, counts):
+        for _ in range(count):
+            current.rest = Link(val)
+            current = current.rest
+    return dummy_head.rest
 
 
 class VirFib():
@@ -154,7 +175,13 @@ class VirFib():
 
     def next(self):
         "*** YOUR CODE HERE ***"
-
+        if self.value == 0:
+            result =  VirFib(1)
+        else:
+            result = VirFib(self.value + self.previous)
+        result.previous = self.value
+        return result
+        
     def __repr__(self):
         return "VirFib object, value " + str(self.value)
 
