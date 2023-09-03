@@ -146,3 +146,105 @@ def two_list(vals, counts):
             temp.rest = Link(vals[index])
         index += 1
     return result
+
+
+class Tree:
+    """
+    >>> t = Tree(3, [Tree(2, [Tree(5)]), Tree(4)])
+    >>> t.label
+    3
+    >>> t.branches[0].label
+    2
+    >>> t.branches[1].is_leaf()
+    True
+    """
+
+    def __init__(self, label, branches=[]):
+        for b in branches:
+            assert isinstance(b, Tree)
+        self.label = label
+        self.branches = list(branches)
+
+    def is_leaf(self):
+        return not self.branches
+
+    def __repr__(self):
+        if self.branches:
+            branch_str = ', ' + repr(self.branches)
+        else:
+            branch_str = ''
+        return 'Tree({0}{1})'.format(self.label, branch_str)
+
+    def __str__(self):
+        def print_tree(t, indent=0):
+            tree_str = '  ' * indent + str(t.label) + "\n"
+            for b in t.branches:
+                tree_str += print_tree(b, indent + 1)
+            return tree_str
+        return print_tree(self).rstrip()
+
+
+def is_bst(t):
+    """Returns True if the Tree t has the structure of a valid BST.
+
+    >>> t1 = Tree(6, [Tree(2, [Tree(1), Tree(4)]), Tree(7, [Tree(7), Tree(8)])])
+    >>> is_bst(t1)
+    True
+    >>> t2 = Tree(8, [Tree(2, [Tree(9), Tree(1)]), Tree(3, [Tree(6)]), Tree(5)])
+    >>> is_bst(t2)
+    False
+    >>> t3 = Tree(6, [Tree(2, [Tree(4), Tree(1)]), Tree(7, [Tree(7), Tree(8)])])
+    >>> is_bst(t3)
+    False
+    >>> t4 = Tree(1, [Tree(2, [Tree(3, [Tree(4)])])])
+    >>> is_bst(t4)
+    True
+    >>> t5 = Tree(1, [Tree(0, [Tree(-1, [Tree(-2)])])])
+    >>> is_bst(t5)
+    True
+    >>> t6 = Tree(1, [Tree(4, [Tree(2, [Tree(3)])])])
+    >>> is_bst(t6)
+    True
+    >>> t7 = Tree(2, [Tree(1, [Tree(5)]), Tree(4)])
+    >>> is_bst(t7)
+    False
+    """
+    "*** YOUR CODE HERE ***"
+    if t.is_leaf():
+        return True
+    if len(t.branches) >= 2:
+        return False
+    if t.branches[0].label <= t.label <= t.branches[1].label:
+        return is_bst(t.branches[0]) and is_bst(t.branches[1])
+    else:
+        return False
+
+
+def bst_max(t):
+    if t.is_leaf():
+        return t.label
+    # if len(t.branches) == 2:
+    #     return max([max(bst_max(t.branches[0])), max(bst_max(t.branches[1]))])
+    # if len(t.branches) == 1:
+    #     return max(bst_max(t.branches[0]))
+    max_child_label = max(bst_max(branch) for branch in t.branches)
+    return max(t.label, max_child_label)
+
+
+def bst_min(t):
+    if t.is_leaf():
+        return t.label
+    max_child_label = min(bst_min(branch) for branch in t.branches)
+    return min(t.label, max_child_label)
+
+
+t1 = Tree(6, [Tree(2, [Tree(1), Tree(4)]), Tree(7, [Tree(7), Tree(8)])])
+t2 = Tree(8, [Tree(2, [Tree(9), Tree(1)]), Tree(3, [Tree(6)]), Tree(5)])
+t3 = Tree(6, [Tree(2, [Tree(4), Tree(1)]), Tree(7, [Tree(7), Tree(8)])])
+t4 = Tree(1, [Tree(2, [Tree(3, [Tree(0)])])])
+t6 = Tree(1, [Tree(4, [Tree(2, [Tree(3)])])])
+# is_bst(t6)
+# print(t6)
+t7 = Tree(2, [Tree(1, [Tree(5)]), Tree(4)])
+bst_max(t6)
+bst_max(t7)

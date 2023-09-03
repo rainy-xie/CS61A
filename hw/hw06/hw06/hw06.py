@@ -176,12 +176,12 @@ class VirFib():
     def next(self):
         "*** YOUR CODE HERE ***"
         if self.value == 0:
-            result =  VirFib(1)
+            result = VirFib(1)
         else:
             result = VirFib(self.value + self.previous)
         result.previous = self.value
         return result
-        
+
     def __repr__(self):
         return "VirFib object, value " + str(self.value)
 
@@ -212,6 +212,34 @@ def is_bst(t):
     False
     """
     "*** YOUR CODE HERE ***"
+    if t.is_leaf():
+        return True
+    if len(t.branches) > 2:
+        return False
+    if len(t.branches) == 1:
+        return is_bst(t.branches[0])
+    # if t.branches[0].label <= t.label <= t.branches[1].label:
+    if bst_max(t.branches[0]) <= t.label <= bst_min(t.branches[1]):
+        return is_bst(t.branches[0]) and is_bst(t.branches[1])
+    return False
+
+
+def bst_max(t):
+    if t.is_leaf():
+        return t.label
+    # if len(t.branches) == 2:
+    #     return max([max(bst_max(t.branches[0])), max(bst_max(t.branches[1]))])
+    # if len(t.branches) == 1:
+    #     return max(bst_max(t.branches[0]))
+    max_child_label = max(bst_max(branch) for branch in t.branches)
+    return max(t.label, max_child_label)
+
+
+def bst_min(t):
+    if t.is_leaf():
+        return t.label
+    max_child_label = min(bst_min(branch) for branch in t.branches)
+    return min(t.label, max_child_label)
 
 
 class Link:
