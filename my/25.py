@@ -2,22 +2,29 @@
 
 class Worker:
     greeting = 'Sir'
+
     def __init__(self):
         self.elf = Worker
+
     def work(self):
         return self.greeting + ', I work'
+
     def __repr__(self):
         return Bourgeoisie.greeting
 
+
 class Bourgeoisie(Worker):
     greeting = 'Peon'
+
     def work(self):
         print(Worker.work(self))
         return 'My job is to gather wealth'
 
+
 jack = Worker()
 john = Bourgeoisie()
 jack.greeting = 'Maam'
+
 
 def work():
     """Working.
@@ -37,6 +44,7 @@ def work():
 
 # Built-in functions & comprehensions
 
+
 def min_abs_indices(s):
     """Indices of all elements in list s that have the smallest absolute value.
 
@@ -49,6 +57,7 @@ def min_abs_indices(s):
     return list(filter(lambda i: abs(s[i]) == min_abs, range(len(s))))
     # OR
     return [i for i in range(len(s)) if abs(s[i]) == min_abs]
+
 
 def largest_adj_sum(s):
     """Largest sum of two adjacent elements in a list s.
@@ -64,6 +73,7 @@ def largest_adj_sum(s):
     # OR
     return max(map(lambda i: s[i] + s[i + 1], range(len(s) - 1)))
 
+
 def digit_dict(s):
     """Map each digit d to the lists of elements in s that end with d.
 
@@ -74,6 +84,7 @@ def digit_dict(s):
     # OR
     last_digits = list(map(lambda x: x % 10, s))
     return {i: [x for x in s if x % 10 == i] for i in range(10) if i in last_digits}
+
 
 def all_have_an_equal(s):
     """Does every element equal some other element in s?
@@ -88,8 +99,9 @@ def all_have_an_equal(s):
     return all([s[i] in s[:i] + s[i+1:] for i in range(len(s))])
     # OR
     return all(map(lambda x: s.count(x) > 1, s))
-    
+
 # Linked lists
+
 
 def ordered(s, key=lambda x: x):
     """Is Link s ordered?
@@ -114,6 +126,7 @@ def ordered(s, key=lambda x: x):
     else:
         return ordered(s.rest)
 
+
 def merge(s, t):
     """Return a sorted Link containing the elements of sorted s & t.
 
@@ -134,6 +147,7 @@ def merge(s, t):
         return Link(s.first, merge(s.rest, t))
     else:
         return Link(t.first, merge(s, t.rest))
+
 
 def merge_in_place(s, t):
     """Return a sorted Link containing the elements of sorted s & t.
@@ -157,6 +171,7 @@ def merge_in_place(s, t):
     else:
         t.rest = merge_in_place(s, t.rest)
         return t
+
 
 class Link:
     """A linked list.
@@ -190,4 +205,3 @@ class Link:
             string += str(self.first) + ' '
             self = self.rest
         return string + str(self.first) + '>'
-

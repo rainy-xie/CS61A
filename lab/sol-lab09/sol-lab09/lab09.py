@@ -7,11 +7,6 @@ def insert_into_all(item, nested_list):
     >>> insert_into_all(0, nl)
     [[0], [0, 1, 2], [0, 3]]
     """
-    "*** YOUR CODE HERE ***"
-    # 直接修改了列表，不合题意
-    # for alist in nested_list:
-    #     alist[0:0] = [item]
-    # return nested_list
     return [[item] + lst for lst in nested_list]
 
 
@@ -58,9 +53,6 @@ def non_decrease_subseqs(s):
     return subseq_helper(s, 0)
 
 
-memo = {}
-
-
 def num_trees(n):
     """Returns the number of unique full binary trees with exactly n leaves. E.g.,
 
@@ -81,13 +73,9 @@ def num_trees(n):
     429
 
     """
-    "*** YOUR CODE HERE ***"
     if n == 1:
         return 1
-    if n in memo:
-        return memo[n]
-    memo[n] = sum(num_trees(k) * num_trees(n - k) for k in range(1, n))
-    return memo[n]
+    return sum(num_trees(k) * num_trees(n - k) for k in range(1, n))
 
 
 def partition_gen(n):
@@ -104,9 +92,9 @@ def partition_gen(n):
         if j == 0:
             yield []
         elif k > 0 and j > 0:
-            for small_part in yield_helper(j-k, k):
+            for small_part in yield_helper(j - k, k):
                 yield [k] + small_part
-            yield from yield_helper(j, k-1)
+            yield from yield_helper(j, k - 1)
     yield from yield_helper(n, n)
 
 
@@ -147,7 +135,37 @@ class VendingMachine:
     >>> w.vend()
     'Here is your soda.'
     """
-    "*** YOUR CODE HERE ***"
+
+    def __init__(self, product, price):
+        self.product = product
+        self.price = price
+        self.stock = 0
+        self.balance = 0
+
+    def restock(self, n):
+        self.stock += n
+        return f'Current {self.product} stock: {self.stock}'
+
+    def add_funds(self, n):
+        if self.stock == 0:
+            return f'Nothing left to vend. Please restock. Here is your ${n}.'
+            # Alternatively, we could have:
+            # return self.vend() + f' Here is your ${n}.'
+        self.balance += n
+        return f'Current balance: ${self.balance}'
+
+    def vend(self):
+        if self.stock == 0:
+            return 'Nothing left to vend. Please restock.'
+        difference = self.price - self.balance
+        if difference > 0:
+            return f'Please update your balance with ${difference} more funds.'
+        message = f'Here is your {self.product}'
+        if difference != 0:
+            message += f' and ${-difference} change'
+        self.balance = 0
+        self.stock -= 1
+        return message + '.'
 
 
 def trade(first, second):
@@ -187,9 +205,9 @@ def trade(first, second):
     """
     m, n = 1, 1
 
-    def equal_prefix(): return ______________________
-    while _______________________________:
-        if __________________:
+    equal_prefix = lambda: sum(first[:m]) == sum(second[:n])
+    while m <= len(first) and n <= len(second) and not equal_prefix():
+        if sum(first[:m]) < sum(second[:n]):
             m += 1
         else:
             n += 1
@@ -227,11 +245,11 @@ def shuffle(cards):
     ['AH', 'AD', 'AS', 'AC', '2H', '2D', '2S', '2C', '3H', '3D', '3S', '3C']
     """
     assert len(cards) % 2 == 0, 'len(cards) must be even'
-    half = _______________
+    half = len(cards) // 2
     shuffled = []
-    for i in _____________:
-        _________________
-        _________________
+    for i in range(half):
+        shuffled.append(cards[i])
+        shuffled.append(cards[half + i])
     return shuffled
 
 
@@ -255,7 +273,26 @@ def insert(link, value, index):
         ...
     IndexError: Out of bounds!
     """
-    "*** YOUR CODE HERE ***"
+    if index == 0:
+        link.rest = Link(link.first, link.rest)
+        link.first = value
+    elif link.rest is Link.empty:
+        raise IndexError("Out of bounds!")
+    else:
+        insert(link.rest, value, index - 1)
+
+# iterative solution
+
+
+def insert_iter(link, value, index):
+    while index > 0 and link.rest is not Link.empty:
+        link = link.rest
+        index -= 1
+    if index == 0:
+        link.rest = Link(link.first, link.rest)
+        link.first = value
+    else:
+        raise IndexError
 
 
 def deep_len(lnk):
@@ -272,12 +309,12 @@ def deep_len(lnk):
     >>> deep_len(levels)
     5
     """
-    if ______________:
+    if lnk is Link.empty:
         return 0
-    elif ______________:
+    elif not isinstance(lnk, Link):
         return 1
     else:
-        return _________________________
+        return deep_len(lnk.first) + deep_len(lnk.rest)
 
 
 def make_to_string(front, mid, back, empty_repr):
@@ -296,10 +333,10 @@ def make_to_string(front, mid, back, empty_repr):
     '()'
     """
     def printer(lnk):
-        if ______________:
-            return _________________________
+        if lnk is Link.empty:
+            return empty_repr
         else:
-            return _________________________
+            return front + str(lnk.first) + mid + printer(lnk.rest) + back
     return printer
 
 
@@ -353,7 +390,13 @@ def long_paths(t, n):
     >>> long_paths(whole, 4)
     [[0, 11, 12, 13, 14]]
     """
-    "*** YOUR CODE HERE ***"
+    if n <= 0 and t.is_leaf():
+      return [[t.label]]
+    paths = []
+    for b in t.branches:
+      for path in long_paths(b, n - 1):
+          paths.append([t.label] + path)
+    return paths
 
 
 def reverse_other(t):
@@ -369,7 +412,16 @@ def reverse_other(t):
     >>> t
     Tree(1, [Tree(8, [Tree(3, [Tree(5), Tree(4)]), Tree(6, [Tree(7)])]), Tree(2)])
     """
-    "*** YOUR CODE HERE ***"
+    def reverse_helper(t, need_reverse):
+        if t.is_leaf():
+            return
+        new_labs = [child.label for child in t.branches][::-1]
+        for i in range(len(t.branches)):
+            child = t.branches[i]
+            reverse_helper(child, not need_reverse)
+            if need_reverse:
+                child.label = new_labs[i]
+    reverse_helper(t, True)
 
 
 class Link:
