@@ -149,6 +149,38 @@ class VendingMachine:
     """
     "*** YOUR CODE HERE ***"
 
+    def __init__(self, product, price):
+        self.product = product
+        self.price = price
+        self.stock = 0
+        self.funds = 0
+
+    def vend(self):
+        if not self.stock:
+            return "Nothing left to vend. Please restock."
+        elif self.funds < self.price:
+            return f"Please update your balance with ${self.price - self.funds} more funds."
+        elif self.funds > self.price:
+            change = self.funds - self.price
+            self.funds = 0
+            self.stock -= 1
+            return f"Here is your {self.product} and ${change} change."
+        else:
+            self.funds = 0
+            self.stock -= 1
+            return f"Here is your {self.product}."
+
+    def add_funds(self, funds):
+        if not self.stock:
+            return f"Nothing left to vend. Please restock. Here is your ${funds}."
+        else:
+            self.funds += funds
+            return f"Current balance: ${self.funds}"
+
+    def restock(self, stock):
+        self.stock += stock
+        return f"Current {self.product} stock: {self.stock}"
+
 
 def trade(first, second):
     """Exchange the smallest prefixes of first and second that have equal sum.
@@ -187,14 +219,14 @@ def trade(first, second):
     """
     m, n = 1, 1
 
-    def equal_prefix(): return ______________________
-    while _______________________________:
-        if __________________:
+    def equal_prefix(lst1, lst2): return sum(lst1) == sum(lst2)
+    while m <= len(first) and n <= len(second) and not equal_prefix(first[:m], second[:n]):
+        if sum(first[:m]) < sum(second[:n]):
             m += 1
         else:
             n += 1
 
-    if equal_prefix():
+    if equal_prefix(first[:m], second[:n]):
         first[:m], second[:n] = second[:n], first[:m]
         return 'Deal!'
     else:
@@ -227,11 +259,11 @@ def shuffle(cards):
     ['AH', 'AD', 'AS', 'AC', '2H', '2D', '2S', '2C', '3H', '3D', '3S', '3C']
     """
     assert len(cards) % 2 == 0, 'len(cards) must be even'
-    half = _______________
+    half = cards[len(cards)//2:]
     shuffled = []
-    for i in _____________:
-        _________________
-        _________________
+    for i in range(len(half)):
+        shuffled.append(cards[i])
+        shuffled.append(half[i])
     return shuffled
 
 
@@ -256,6 +288,18 @@ def insert(link, value, index):
     IndexError: Out of bounds!
     """
     "*** YOUR CODE HERE ***"
+    i = 0
+    pre = link
+    flag = False
+    while pre:
+        if index == i:
+            flag = True
+            pre.rest = Link(pre.first, pre.rest)
+            pre.first = value
+        pre = pre.rest
+        i += 1
+    if not flag:
+        raise IndexError("Out of bounds!")
 
 
 def deep_len(lnk):
@@ -272,12 +316,12 @@ def deep_len(lnk):
     >>> deep_len(levels)
     5
     """
-    if ______________:
+    if lnk is Link.empty:
         return 0
-    elif ______________:
+    elif isinstance(lnk, int):
         return 1
     else:
-        return _________________________
+        return deep_len(lnk.first) + deep_len(lnk.rest)
 
 
 def make_to_string(front, mid, back, empty_repr):
@@ -296,10 +340,10 @@ def make_to_string(front, mid, back, empty_repr):
     '()'
     """
     def printer(lnk):
-        if ______________:
-            return _________________________
+        if lnk is Link.empty:
+            return empty_repr
         else:
-            return _________________________
+            return front + str(lnk.first) + mid + printer(lnk.rest) + back
     return printer
 
 
@@ -354,7 +398,9 @@ def long_paths(t, n):
     [[0, 11, 12, 13, 14]]
     """
     "*** YOUR CODE HERE ***"
-
+    list_of_path = []
+    path = []
+    
 
 def reverse_other(t):
     """Mutates the tree such that nodes on every other (odd-depth)
@@ -370,6 +416,7 @@ def reverse_other(t):
     Tree(1, [Tree(8, [Tree(3, [Tree(5), Tree(4)]), Tree(6, [Tree(7)])]), Tree(2)])
     """
     "*** YOUR CODE HERE ***"
+    
 
 
 class Link:
